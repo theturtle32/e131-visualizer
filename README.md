@@ -10,4 +10,4 @@ $ npm install
 $ node ./index.js
 ```
 
-Once the server is running, open a browser to port 3000.
+Once the server is running, [open a browser to port 3000](http://localhost:3000/).
