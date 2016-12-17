@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>E1.31 Preview Display</title>
+    <style media="screen">
+      html,body {
+        background-color: #000;
+      }
+    </style>
+  </head>
+  <body>
+
+    <canvas id="preview-canvas" width="1200" height="600"></canvas>
+    <script>
+    
+    gammaCorrect = (val, gamma) => 255 * Math.pow(val / 255, gamma) | 0;
+    
+    var gamma = 1;
+    var gammaLUT = [...new Array(256).keys()].map( val => gammaCorrect(val, gamma) );
+    
+    var height = 30;
+    var width = 6;
+
+    var canvas = document.getElementById('preview-canvas');
+    var ctx = canvas.getContext('2d');
+    [1,2,3].forEach( universe => {
+      ctx.fillStyle = 'rgb(255,255,255)';
+      ctx.fillRect(0, universe*(height+4), width*170+2, height+2);
+    } );
+    
+    var connection = new WebSocket('ws://localhost:3000/');
+    connection.addEventListener('message', function(messageEvent) {
+      var message = JSON.parse(messageEvent.data);
+      renderToCanvas(message.universe, message.slots);
+      // console.log(`${message.universe} - ${message.slots.length}`);
+    }, false);
+
+    function renderToCanvas(universe, slots) {
+      for (let x = 0; x < 170; x ++) {
+        if (x*3 > slots.length) {
+          ctx.fillStyle = 'rgb(0,0,0)';
+        }
+        else {
+          let [red,green,blue] = [ slots[x*3], slots[x*3+1], slots[x*3+2] ];
+          red   = gammaLUT[red];
+          green = gammaLUT[green];
+          blue  = gammaLUT[blue];
+          ctx.fillStyle = `rgb(${red},${green},${blue})`;
+        }
+        
+        ctx.fillRect(x*width+1, universe*(height+4)+1, width, height);
+      }
+    }
+
+    </script>
+    
+  </body>
+</html>
