@@ -1,10 +1,8 @@
-import 'babel-polyfill';
-import 'babel-register';
-import Koa from 'koa';
-import serve from 'koa-serve-static';
-import http from 'http';
-import {server as WebSocketServer} from 'websocket';
-import bridge from './e131bridge';
+const Koa = require('koa');
+const serve = require('koa-serve-static');
+const http = require('http');
+const WebSocketServer = require('websocket').server;
+const bridge = require('./e131bridge');
 
 let app = new Koa();
 app.use(serve('./static'));
